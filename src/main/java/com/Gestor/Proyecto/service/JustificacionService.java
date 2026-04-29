@@ -4,6 +4,7 @@ import com.Gestor.Proyecto.model.*;
 import com.Gestor.Proyecto.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -13,7 +14,8 @@ public class JustificacionService {
     private final JustificacionRepository justificacionRepository;
     private final NotificacionRepository notificacionRepository;
     private final UsuarioRepository usuarioRepository;
-
+    
+    @Transactional
     public List<Justificacion> listar() { return justificacionRepository.findAll(); }
     public List<Justificacion> listarPorEstudiante(Integer carne) {
         return justificacionRepository.findByEstudianteCarne(carne);

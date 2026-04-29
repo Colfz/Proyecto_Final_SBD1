@@ -19,6 +19,6 @@ public class UsuarioService {
 
     public Optional<Usuario> login(String nombre, String contrasenia) {
         return usuarioRepository.findByNombre(nombre)
-            .filter(usuario -> usuario.getContrasenia().equals(contrasenia));
+            .filter(u -> u.getContrasenia().equals(contrasenia));
     }
 }
