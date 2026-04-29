@@ -5,13 +5,14 @@ import com.Gestor.Proyecto.model.Discapacidad;
 import com.Gestor.Proyecto.service.DiscapacidadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/discapacidades")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class DiscapacidadController {
+    
     private final DiscapacidadService discapacidadService;
 
     @GetMapping
