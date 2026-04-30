@@ -1,0 +1,82 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="sidebar col-md-2 p-0 min-vh-100" style="background: #1a237e;">
+    <div class="p-3 border-bottom border-secondary">
+      <span class="text-white fw-bold fs-5"><i class="bi bi-mortarboard-fill"></i> CUNORI</span>
+    </div>
+    <nav class="mt-2">
+      <a routerLink="/dashboard" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a routerLink="/estudiantes" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-people"></i> Estudiantes
+      </a>
+      <a routerLink="/justificaciones" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-file-earmark-text"></i> Justificaciones
+      </a>
+      <a routerLink="/catalogos" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-gear"></i> Catálogos
+      </a>
+    </nav>
+    <div class="p-3 position-absolute bottom-0 w-100">
+      <button class="btn btn-outline-light btn-sm w-100" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="col-md-10 p-4" style="background: #f5f5f5; min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-bold">Dashboard</h4>
+      <div>
+        <span class="badge bg-primary">{{ usuario?.rol?.tipo }}</span>
+        <span class="ms-2">{{ usuario?.nombre }}</span>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card border-start border-primary border-4 p-3">
+          <div class="text-muted small">Total Estudiantes</div>
+          <div class="fs-2 fw-bold text-primary">{{ totalEstudiantes }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-start border-success border-4 p-3">
+          <div class="text-muted small">Inscritos</div>
+          <div class="fs-2 fw-bold text-success">{{ totalInscritos }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-start border-warning border-4 p-3">
+          <div class="text-muted small">Justificaciones Pendientes</div>
+          <div class="fs-2 fw-bold text-warning">{{ totalPendientes }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-start border-info border-4 p-3">
+          <div class="text-muted small">Carreras</div>
+          <div class="fs-2 fw-bold text-info">{{ totalCarreras }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3"><i class="bi bi-bell"></i> Notificaciones recientes</h6>
+      <div *ngIf="notificaciones.length === 0" class="text-muted">
+        No hay notificaciones nuevas.
+      </div>
+      <div class="list-group list-group-flush">
+        <div *ngFor="let n of notificaciones" class="list-group-item d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-bell-fill text-warning"></i> {{ n.mensaje }}</span>
+          <button class="btn btn-sm btn-outline-secondary" (click)="marcarLeida(n.id)">
+            Marcar leída
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

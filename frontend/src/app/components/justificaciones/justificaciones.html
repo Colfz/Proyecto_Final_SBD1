@@ -1,0 +1,172 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="col-md-2 p-0 min-vh-100" style="background: #1a237e;">
+    <div class="p-3 border-bottom border-secondary">
+      <span class="text-white fw-bold fs-5"><i class="bi bi-mortarboard-fill"></i> CUNORI</span>
+    </div>
+    <nav class="mt-2">
+      <a routerLink="/dashboard" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a routerLink="/estudiantes" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-people"></i> Estudiantes
+      </a>
+      <a routerLink="/justificaciones" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-file-earmark-text"></i> Justificaciones
+      </a>
+      <a routerLink="/catalogos" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-gear"></i> Catálogos
+      </a>
+    </nav>
+    <div class="p-3 position-absolute bottom-0 w-100">
+      <button class="btn btn-outline-light btn-sm w-100" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="col-md-10 p-4" style="background: #f5f5f5; min-height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold"><i class="bi bi-file-earmark-text"></i> Justificaciones</h4>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalJustificacion" (click)="nueva()">
+        <i class="bi bi-plus-circle"></i> Nueva Justificación
+      </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Estudiante</th>
+              <th>Motivo</th>
+              <th>Fecha Presentación</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let j of justificaciones">
+              <td>{{ j.id }}</td>
+              <td>{{ j.estudiante?.nombres }} {{ j.estudiante?.apellidos }}</td>
+              <td>{{ j.motivo?.nombre }}</td>
+              <td>{{ j.fechaPresentacion | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <select class="form-select form-select-sm" style="width: auto;"
+                  [value]="j.estado?.id"
+                  (change)="actualizarEstado(j.id, +$any($event.target).value)">
+                  <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-info me-1" data-bs-toggle="modal"
+                  data-bs-target="#modalDetalle" (click)="verDetalle(j)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(j.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="justificaciones.length === 0">
+              <td colspan="6" class="text-center text-muted">No hay justificaciones registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva Justificación -->
+<div class="modal fade" id="modalJustificacion" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #1a237e; color: white;">
+        <h5 class="modal-title">Nueva Justificación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Estudiante</label>
+            <select class="form-select" [(ngModel)]="form.estudiante">
+              <option [value]="null">Seleccionar</option>
+              <option *ngFor="let e of estudiantes" [value]="e.carne">
+                {{ e.nombres }} {{ e.apellidos }} ({{ e.carne }})
+              </option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Motivo</label>
+            <select class="form-select" [(ngModel)]="form.motivo">
+              <option [value]="null">Seleccionar</option>
+              <option *ngFor="let m of motivos" [value]="m.id">{{ m.nombre }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Fecha de Presentación</label>
+            <input type="date" class="form-control" [(ngModel)]="form.fechaPresentacion">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Documento de Respaldo</label>
+            <input type="text" class="form-control" [(ngModel)]="form.documentoRespaldo" placeholder="Nombre del archivo">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" [(ngModel)]="form.descripcion" rows="3"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Fechas de Ausencia</label>
+            <div *ngFor="let f of form.fechasAusencia; let i = index" class="d-flex gap-2 mb-2">
+              <input type="date" class="form-control" [(ngModel)]="form.fechasAusencia[i]">
+              <button class="btn btn-danger btn-sm" (click)="eliminarFecha(i)" *ngIf="form.fechasAusencia.length > 1">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <button class="btn btn-outline-primary btn-sm" (click)="agregarFecha()">
+              <i class="bi bi-plus"></i> Agregar fecha
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="guardar()">
+          <i class="bi bi-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalle -->
+<div class="modal fade" id="modalDetalle" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" *ngIf="justificacionSeleccionada">
+      <div class="modal-header" style="background: #1a237e; color: white;">
+        <h5 class="modal-title">Detalle Justificación #{{ justificacionSeleccionada.id }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Estudiante:</strong> {{ justificacionSeleccionada.estudiante?.nombres }} {{ justificacionSeleccionada.estudiante?.apellidos }}</p>
+        <p><strong>Motivo:</strong> {{ justificacionSeleccionada.motivo?.nombre }}</p>
+        <p><strong>Estado:</strong> {{ justificacionSeleccionada.estado?.nombre }}</p>
+        <p><strong>Descripción:</strong> {{ justificacionSeleccionada.descripcion }}</p>
+        <p><strong>Documento:</strong> {{ justificacionSeleccionada.documentoRespaldo }}</p>
+        <p><strong>Fechas de Ausencia:</strong></p>
+        <ul>
+          <li *ngFor="let f of justificacionSeleccionada.fechasAusencia">
+            {{ f.fechaAusencia | date:'dd/MM/yyyy' }}
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

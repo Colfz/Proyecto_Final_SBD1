@@ -1,0 +1,155 @@
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div class="col-md-2 p-0 min-vh-100" style="background: #1a237e;">
+    <div class="p-3 border-bottom border-secondary">
+      <span class="text-white fw-bold fs-5"><i class="bi bi-mortarboard-fill"></i> CUNORI</span>
+    </div>
+    <nav class="mt-2">
+      <a routerLink="/dashboard" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a routerLink="/estudiantes" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-people"></i> Estudiantes
+      </a>
+      <a routerLink="/justificaciones" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-file-earmark-text"></i> Justificaciones
+      </a>
+      <a routerLink="/catalogos" class="d-block text-decoration-none text-white px-3 py-2 nav-link-hover">
+        <i class="bi bi-gear"></i> Catálogos
+      </a>
+    </nav>
+    <div class="p-3 position-absolute bottom-0 w-100">
+      <button class="btn btn-outline-light btn-sm w-100" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="col-md-10 p-4" style="background: #f5f5f5; min-height: 100vh;">
+    <h4 class="fw-bold mb-4"><i class="bi bi-gear"></i> Catálogos</h4>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'motivos'" (click)="tabActivo = 'motivos'">Motivos</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'actividades'" (click)="tabActivo = 'actividades'">Tipos de Actividad</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'carreras'" (click)="tabActivo = 'carreras'">Carreras</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'discapacidades'" (click)="tabActivo = 'discapacidades'">Tipos de Discapacidad</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'condiciones'" (click)="tabActivo = 'condiciones'">Condiciones Médicas</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="tabActivo === 'alergias'" (click)="tabActivo = 'alergias'">Alergias</button>
+      </li>
+    </ul>
+
+    <!-- Motivos -->
+    <div *ngIf="tabActivo === 'motivos'" class="card p-3">
+      <h6 class="fw-bold mb-3">Motivos de Inasistencia</h6>
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevoMotivo" placeholder="Nuevo motivo">
+        <button class="btn btn-primary" (click)="agregarMotivo()"><i class="bi bi-plus"></i> Agregar</button>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let m of motivos" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ m.nombre }}
+          <button class="btn btn-sm btn-danger" (click)="eliminarMotivo(m.id)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tipos de Actividad -->
+    <div *ngIf="tabActivo === 'actividades'" class="card p-3">
+      <h6 class="fw-bold mb-3">Tipos de Actividad</h6>
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevoTipoActividad" placeholder="Nuevo tipo de actividad">
+        <button class="btn btn-primary" (click)="agregarTipoActividad()"><i class="bi bi-plus"></i> Agregar</button>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let t of tiposActividad" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ t.tipo }}
+          <button class="btn btn-sm btn-danger" (click)="eliminarTipoActividad(t.id)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Carreras -->
+    <div *ngIf="tabActivo === 'carreras'" class="card p-3">
+      <h6 class="fw-bold mb-3">Carreras</h6>
+      <div class="row g-2 mb-3">
+        <div class="col-md-2">
+          <input type="number" class="form-control" [(ngModel)]="nuevaCarrera.codigo" placeholder="Código">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" [(ngModel)]="nuevaCarrera.nombre" placeholder="Nombre">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" [(ngModel)]="nuevaCarrera.coordinador" placeholder="Coordinador">
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100" (click)="agregarCarrera()"><i class="bi bi-plus"></i> Agregar</button>
+        </div>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let c of carreras" class="list-group-item d-flex justify-content-between align-items-center">
+          <span><strong>{{ c.codigo }}</strong> — {{ c.nombre }} ({{ c.coordinador }})</span>
+          <button class="btn btn-sm btn-danger" (click)="eliminarCarrera(c.codigo)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tipos de Discapacidad -->
+    <div *ngIf="tabActivo === 'discapacidades'" class="card p-3">
+      <h6 class="fw-bold mb-3">Tipos de Discapacidad</h6>
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevoTipoDiscapacidad" placeholder="Nuevo tipo">
+        <button class="btn btn-primary" (click)="agregarTipoDiscapacidad()"><i class="bi bi-plus"></i> Agregar</button>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let t of tiposDiscapacidad" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ t.nombre }}
+          <button class="btn btn-sm btn-danger" (click)="eliminarTipoDiscapacidad(t.id)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Condiciones Médicas -->
+    <div *ngIf="tabActivo === 'condiciones'" class="card p-3">
+      <h6 class="fw-bold mb-3">Condiciones Médicas</h6>
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevaCondicion" placeholder="Nueva condición">
+        <button class="btn btn-primary" (click)="agregarCondicion()"><i class="bi bi-plus"></i> Agregar</button>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let c of condicionesMedicas" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ c.nombre }}
+          <button class="btn btn-sm btn-danger" (click)="eliminarCondicion(c.id)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Alergias -->
+    <div *ngIf="tabActivo === 'alergias'" class="card p-3">
+      <h6 class="fw-bold mb-3">Alergias</h6>
+      <div class="d-flex gap-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevaAlergia" placeholder="Nueva alergia">
+        <button class="btn btn-primary" (click)="agregarAlergia()"><i class="bi bi-plus"></i> Agregar</button>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let a of alergias" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ a.tipo }}
+          <button class="btn btn-sm btn-danger" (click)="eliminarAlergia(a.id)"><i class="bi bi-trash"></i></button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>
