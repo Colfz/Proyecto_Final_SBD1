@@ -14,6 +14,7 @@ public class JustificacionService {
     private final JustificacionRepository justificacionRepository;
     private final NotificacionRepository notificacionRepository;
     private final UsuarioRepository usuarioRepository;
+    private final FechaAusenciaRepository fechaAusenciaRepository;
     
     @Transactional
     public List<Justificacion> listar() { return justificacionRepository.findAll(); }
@@ -35,7 +36,20 @@ public class JustificacionService {
         return justificacionRepository.save(j);
     }
 
-    public void eliminar(Integer id) { justificacionRepository.deleteById(id); }
+    @Transactional
+    public void eliminar(Integer id) {
+        // 1. Eliminar notificaciones asociadas
+        notificacionRepository.findAll().stream()
+            .filter(n -> n.getJustificacion() != null && n.getJustificacion().getId().equals(id))
+            .forEach(n -> notificacionRepository.deleteById(n.getId()));
+
+        // 2. Eliminar fechas de ausencia asociadas
+        fechaAusenciaRepository.findByJustificacionId(id)
+            .forEach(f -> fechaAusenciaRepository.deleteById(f.getId()));
+
+        // 3. Eliminar la justificación
+        justificacionRepository.deleteById(id);
+    }
 
     private void generarNotificaciones(Justificacion justificacion) {
         // Notificar a coordinadores y admins

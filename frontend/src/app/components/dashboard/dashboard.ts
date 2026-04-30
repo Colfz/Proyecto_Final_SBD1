@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api';
 import { CommonModule } from '@angular/common';
@@ -19,32 +19,34 @@ export class Dashboard implements OnInit {
   totalCarreras = 0;
   notificaciones: any[] = [];
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
     const sesion = sessionStorage.getItem('usuario');
-    if (!sesion) {
-      this.router.navigate(['/login']);
-    } else {
-      this.usuario = JSON.parse(sesion);
-    }
+    if (!sesion) this.router.navigate(['/login']);
+    else this.usuario = JSON.parse(sesion);
   }
 
   ngOnInit() {
     this.cargarDatos();
   }
 
+
   cargarDatos() {
     this.api.getAll('estudiantes').subscribe(data => {
       this.totalEstudiantes = data.length;
       this.totalInscritos = data.filter(e => e.inscrito).length;
+      this.cdr.detectChanges();
     });
     this.api.getAll('carreras').subscribe(data => {
       this.totalCarreras = data.length;
+      this.cdr.detectChanges();
     });
     this.api.getAll('justificaciones').subscribe(data => {
       this.totalPendientes = data.filter((j: any) => j.estado.nombre === 'PRESENTADA').length;
+      this.cdr.detectChanges();
     });
     this.api.getAll(`notificaciones/usuario/${this.usuario.id}/no-leidas`).subscribe(data => {
       this.notificaciones = data;
+      this.cdr.detectChanges();
     });
   }
 

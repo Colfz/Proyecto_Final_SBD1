@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../services/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ export class Justificaciones implements OnInit {
     fechasAusencia: ['']
   };
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
     const sesion = sessionStorage.getItem('usuario');
     if (!sesion) this.router.navigate(['/login']);
     else this.usuario = JSON.parse(sesion);
@@ -39,11 +39,24 @@ export class Justificaciones implements OnInit {
     this.cargarDatos();
   }
 
+
   cargarDatos() {
-    this.api.getAll('justificaciones').subscribe(data => this.justificaciones = data);
-    this.api.getAll('estudiantes').subscribe(data => this.estudiantes = data);
-    this.api.getAll('motivos').subscribe(data => this.motivos = data);
-    this.api.getAll('estados').subscribe(data => this.estados = data);
+    this.api.getAll('justificaciones').subscribe(data => {
+      this.justificaciones = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('estudiantes').subscribe(data => {
+      this.estudiantes = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('motivos').subscribe(data => {
+      this.motivos = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('estados').subscribe(data => {
+      this.estados = data;
+      this.cdr.detectChanges();
+    });
   }
 
   nueva() {
@@ -77,18 +90,17 @@ export class Justificaciones implements OnInit {
     const body = {
       descripcion: this.form.descripcion,
       documentoRespaldo: this.form.documentoRespaldo,
-      fechaPresentacion: this.form.fechaPresentacion,
+      fechaPresentacion: this.form.fechaPresentacion + 'T00:00:00',
       estudiante: { carne: this.form.estudiante },
       motivo: { id: this.form.motivo },
       estado: { id: 1 }
     };
 
     this.api.post('justificaciones', body).subscribe((j: any) => {
-      // Guardar fechas de ausencia
       this.form.fechasAusencia.forEach((fecha: string) => {
         if (fecha) {
           this.api.post('fecha-ausencia', {
-            fechaAusencia: fecha,
+            fechaAusencia: fecha + 'T00:00:00',
             justificacion: { id: j.id }
           }).subscribe();
         }

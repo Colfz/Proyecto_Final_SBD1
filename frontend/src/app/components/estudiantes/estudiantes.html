@@ -19,8 +19,8 @@
       </a>
     </nav>
     <div class="p-3 position-absolute bottom-0 w-100">
-      <button class="btn btn-outline-light btn-sm w-100" (click)="router.navigate(['/login']); sessionStorage.removeItem('usuario')">
-        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+      <button class="btn btn-outline-light btn-sm w-100" (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
       </button>
     </div>
   </div>
@@ -244,21 +244,47 @@
             <strong>Carreras:</strong>
             <span *ngFor="let c of estudianteSeleccionado.carreras" class="badge bg-primary me-1">{{ c.nombre }}</span>
           </div>
-          <div class="col-12">
-            <strong>Condiciones Médicas:</strong>
-            <span *ngFor="let c of estudianteSeleccionado.condicionesMedicas" class="badge bg-danger me-1">{{ c.nombre }}</span>
-            <span *ngIf="estudianteSeleccionado.condicionesMedicas?.length === 0" class="text-muted">Ninguna</span>
-          </div>
-          <div class="col-12">
-            <strong>Alergias:</strong>
-            <span *ngFor="let a of estudianteSeleccionado.alergias" class="badge bg-warning text-dark me-1">{{ a.tipo }}</span>
-            <span *ngIf="estudianteSeleccionado.alergias?.length === 0" class="text-muted">Ninguna</span>
-          </div>
-          <div class="col-12">
-            <strong>Discapacidades:</strong>
-            <span *ngFor="let d of estudianteSeleccionado.discapacidades" class="badge bg-secondary me-1">{{ d.tipo }}</span>
-            <span *ngIf="estudianteSeleccionado.discapacidades?.length === 0" class="text-muted">Ninguna</span>
-          </div>
+            <!-- Condiciones Médicas -->
+  <div class="col-md-12">
+    <label class="form-label">Condiciones Médicas</label>
+    <div class="d-flex flex-wrap gap-2">
+      <div *ngFor="let c of condicionesMedicas" class="form-check">
+        <input class="form-check-input" type="checkbox"
+          [checked]="condicionSeleccionada(c.id)"
+          (change)="toggleCondicion(c.id)"
+          [id]="'condicion-' + c.id">
+        <label class="form-check-label" [for]="'condicion-' + c.id">{{ c.nombre }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alergias -->
+  <div class="col-md-12">
+    <label class="form-label">Alergias</label>
+    <div class="d-flex flex-wrap gap-2">
+      <div *ngFor="let a of alergias" class="form-check">
+        <input class="form-check-input" type="checkbox"
+          [checked]="alergiaSeleccionada(a.id)"
+          (change)="toggleAlergia(a.id)"
+          [id]="'alergia-' + a.id">
+        <label class="form-check-label" [for]="'alergia-' + a.id">{{ a.tipo }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discapacidades -->
+  <div class="col-md-12">
+    <label class="form-label">Discapacidades</label>
+    <div class="d-flex flex-wrap gap-2">
+      <div *ngFor="let d of discapacidades" class="form-check">
+        <input class="form-check-input" type="checkbox"
+          [checked]="discapacidadSeleccionada(d.id)"
+          (change)="toggleDiscapacidad(d.id)"
+          [id]="'discapacidad-' + d.id">
+        <label class="form-check-label" [for]="'discapacidad-' + d.id">{{ d.tipo }}</label>
+      </div>
+    </div>
+  </div>
         </div>
       </div>
       <div class="modal-footer">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../services/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,9 @@ export class Estudiantes implements OnInit {
   estudiantes: any[] = [];
   carreras: any[] = [];
   sangres: any[] = [];
+  condicionesMedicas: any[] = [];
+  alergias: any[] = [];
+  discapacidades: any[] = [];
   estudianteSeleccionado: any = null;
   modoEdicion = false;
 
@@ -33,7 +36,7 @@ export class Estudiantes implements OnInit {
     sangre: null, carreras: []
   };
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
     const sesion = sessionStorage.getItem('usuario');
     if (!sesion) this.router.navigate(['/login']);
     else this.usuario = JSON.parse(sesion);
@@ -44,9 +47,30 @@ export class Estudiantes implements OnInit {
   }
 
   cargarDatos() {
-    this.api.getAll('estudiantes').subscribe(data => this.estudiantes = data);
-    this.api.getAll('carreras').subscribe(data => this.carreras = data);
-    this.api.getAll('sangres').subscribe(data => this.sangres = data);
+    this.api.getAll('estudiantes').subscribe(data => {
+      this.estudiantes = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('carreras').subscribe(data => {
+      this.carreras = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('sangres').subscribe(data => {
+      this.sangres = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('condiciones-medicas').subscribe(data => {
+      this.condicionesMedicas = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('alergias').subscribe(data => {
+      this.alergias = data;
+      this.cdr.detectChanges();
+    });
+    this.api.getAll('discapacidades').subscribe(data => {
+      this.discapacidades = data;
+      this.cdr.detectChanges();
+    });
   }
 
   filtrar() {
@@ -71,7 +95,10 @@ export class Estudiantes implements OnInit {
       fechaNac: '', genero: '', fotografia: '', correoInstitucional: '',
       correoPersonal: '', direccion: '', anioIngreso: '',
       inscrito: false, pensumCerrado: false,
-      sangre: null, carreras: []
+      sangre: null, carreras: [],
+      condicionesMedicas: [],
+      alergias: [],
+      discapacidades: []
     };
   }
 
@@ -93,8 +120,13 @@ export class Estudiantes implements OnInit {
   guardar() {
     const body = {
       ...this.form,
+      fechaNac: this.form.fechaNac ? this.form.fechaNac + 'T00:00:00' : null,
+      anioIngreso: this.form.anioIngreso ? this.form.anioIngreso + 'T00:00:00' : null,
       sangre: this.form.sangre ? { id: this.form.sangre } : null,
-      carreras: this.form.carreras.map((c: any) => ({ codigo: c }))
+      carreras: this.form.carreras.map((c: any) => ({ codigo: c })),
+      condicionesMedicas: this.form.condicionesMedicas.map((id: number) => ({ id })),
+      alergias: this.form.alergias.map((id: number) => ({ id })),
+      discapacidades: this.form.discapacidades.map((id: number) => ({ id }))
     };
 
     if (this.modoEdicion) {
@@ -106,6 +138,11 @@ export class Estudiantes implements OnInit {
         this.cargarDatos();
       });
     }
+  }
+
+  cerrarSesion() {
+  sessionStorage.removeItem('usuario');
+  this.router.navigate(['/login']);
   }
 
   eliminar(carne: number) {
@@ -120,6 +157,33 @@ export class Estudiantes implements OnInit {
     const idx = this.form.carreras.indexOf(codigo);
     if (idx === -1) this.form.carreras.push(codigo);
     else this.form.carreras.splice(idx, 1);
+  }
+
+    toggleCondicion(id: number) {
+    const idx = this.form.condicionesMedicas.indexOf(id);
+    if (idx === -1) this.form.condicionesMedicas.push(id);
+    else this.form.condicionesMedicas.splice(idx, 1);
+  }
+  condicionSeleccionada(id: number): boolean {
+    return this.form.condicionesMedicas.includes(id);
+  }
+
+  toggleAlergia(id: number) {
+    const idx = this.form.alergias.indexOf(id);
+    if (idx === -1) this.form.alergias.push(id);
+    else this.form.alergias.splice(idx, 1);
+  }
+  alergiaSeleccionada(id: number): boolean {
+    return this.form.alergias.includes(id);
+  }
+
+  toggleDiscapacidad(id: number) {
+    const idx = this.form.discapacidades.indexOf(id);
+    if (idx === -1) this.form.discapacidades.push(id);
+    else this.form.discapacidades.splice(idx, 1);
+  }
+  discapacidadSeleccionada(id: number): boolean {
+    return this.form.discapacidades.includes(id);
   }
 
   carreraSeleccionada(codigo: number): boolean {

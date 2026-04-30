@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../services/api';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +33,7 @@ export class Catalogos implements OnInit {
   // Tab activo
   tabActivo = 'motivos';
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
     const sesion = sessionStorage.getItem('usuario');
     if (!sesion) this.router.navigate(['/login']);
     else this.usuario = JSON.parse(sesion);
@@ -42,12 +42,12 @@ export class Catalogos implements OnInit {
   ngOnInit() { this.cargarDatos(); }
 
   cargarDatos() {
-    this.api.getAll('motivos').subscribe(d => this.motivos = d);
-    this.api.getAll('tipos-actividad').subscribe(d => this.tiposActividad = d);
-    this.api.getAll('carreras').subscribe(d => this.carreras = d);
-    this.api.getAll('tipos-discapacidad').subscribe(d => this.tiposDiscapacidad = d);
-    this.api.getAll('condiciones-medicas').subscribe(d => this.condicionesMedicas = d);
-    this.api.getAll('alergias').subscribe(d => this.alergias = d);
+    this.api.getAll('motivos').subscribe(d => { this.motivos = d; this.cdr.detectChanges(); });
+    this.api.getAll('tipos-actividad').subscribe(d => { this.tiposActividad = d; this.cdr.detectChanges(); });
+    this.api.getAll('carreras').subscribe(d => { this.carreras = d; this.cdr.detectChanges(); });
+    this.api.getAll('tipos-discapacidad').subscribe(d => { this.tiposDiscapacidad = d; this.cdr.detectChanges(); });
+    this.api.getAll('condiciones-medicas').subscribe(d => { this.condicionesMedicas = d; this.cdr.detectChanges(); });
+    this.api.getAll('alergias').subscribe(d => { this.alergias = d; this.cdr.detectChanges(); });
   }
 
   // Motivos
