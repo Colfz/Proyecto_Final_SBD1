@@ -98,10 +98,12 @@ export class Estudiantes implements OnInit {
     this.modoEdicion = false;
     this.form = {
       carne: null, cui: '', nombres: '', apellidos: '',
-      fechaNac: '', genero: '', fotografia: '', correoInstitucional: '',
-      correoPersonal: '', direccion: '', anioIngreso: '',
+      fechaNac: '', genero: '', fotografia: '',
+      correoInstitucional: '', correoPersonal: '',
+      direccion: '', anioIngreso: '',
       inscrito: false, pensumCerrado: false,
-      sangre: null, carreras: [],
+      sangre: null,
+      carreras: [],
       condicionesMedicas: [],
       alergias: [],
       discapacidades: []
@@ -115,7 +117,10 @@ export class Estudiantes implements OnInit {
       fechaNac: e.fechaNac ? e.fechaNac.substring(0, 10) : '',
       anioIngreso: e.anioIngreso ? e.anioIngreso.substring(0, 10) : '',
       sangre: e.sangre ? e.sangre.id : null,
-      carreras: e.carreras ? e.carreras.map((c: any) => c.codigo) : []
+      carreras: e.carreras ? e.carreras.map((c: any) => c.codigo) : [],
+      condicionesMedicas: e.condicionesMedicas ? e.condicionesMedicas.map((c: any) => c.id) : [],
+      alergias: e.alergias ? e.alergias.map((a: any) => a.id) : [],
+      discapacidades: e.discapacidades ? e.discapacidades.map((d: any) => d.id) : []
     };
   }
 
@@ -159,40 +164,39 @@ export class Estudiantes implements OnInit {
     }
   }
 
-  toggleCarrera(codigo: number) {
-    const idx = this.form.carreras.indexOf(codigo);
-    if (idx === -1) this.form.carreras.push(codigo);
-    else this.form.carreras.splice(idx, 1);
-  }
+toggleCarrera(codigo: number) {
+  const idx = this.form.carreras.indexOf(codigo);
+  if (idx === -1) this.form.carreras.push(codigo);
+  else this.form.carreras.splice(idx, 1);
+}
+carreraSeleccionada(codigo: number): boolean {
+  return this.form.carreras.includes(codigo);
+}
+toggleCondicion(id: number) {
+  const idx = this.form.condicionesMedicas.indexOf(Number(id));
+  if (idx === -1) this.form.condicionesMedicas.push(Number(id));
+  else this.form.condicionesMedicas.splice(idx, 1);
+}
+condicionSeleccionada(id: number): boolean {
+  return this.form.condicionesMedicas.includes(Number(id));
+}
 
-    toggleCondicion(id: number) {
-    const idx = this.form.condicionesMedicas.indexOf(id);
-    if (idx === -1) this.form.condicionesMedicas.push(id);
-    else this.form.condicionesMedicas.splice(idx, 1);
-  }
-  condicionSeleccionada(id: number): boolean {
-    return this.form.condicionesMedicas.includes(id);
-  }
+toggleAlergia(id: number) {
+  const idx = this.form.alergias.indexOf(Number(id));
+  if (idx === -1) this.form.alergias.push(Number(id));
+  else this.form.alergias.splice(idx, 1);
+}
+alergiaSeleccionada(id: number): boolean {
+  return this.form.alergias.includes(Number(id));
+}
 
-  toggleAlergia(id: number) {
-    const idx = this.form.alergias.indexOf(id);
-    if (idx === -1) this.form.alergias.push(id);
-    else this.form.alergias.splice(idx, 1);
-  }
-  alergiaSeleccionada(id: number): boolean {
-    return this.form.alergias.includes(id);
-  }
+toggleDiscapacidad(id: number) {
+  const idx = this.form.discapacidades.indexOf(Number(id));
+  if (idx === -1) this.form.discapacidades.push(Number(id));
+  else this.form.discapacidades.splice(idx, 1);
+}
+discapacidadSeleccionada(id: number): boolean {
+  return this.form.discapacidades.includes(Number(id));
+}
 
-  toggleDiscapacidad(id: number) {
-    const idx = this.form.discapacidades.indexOf(id);
-    if (idx === -1) this.form.discapacidades.push(id);
-    else this.form.discapacidades.splice(idx, 1);
-  }
-  discapacidadSeleccionada(id: number): boolean {
-    return this.form.discapacidades.includes(id);
-  }
-
-  carreraSeleccionada(codigo: number): boolean {
-    return this.form.carreras.includes(codigo);
-  }
 }
