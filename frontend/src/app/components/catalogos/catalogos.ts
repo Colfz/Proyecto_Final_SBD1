@@ -62,13 +62,21 @@ export class Catalogos implements OnInit {
     });
   }
 
- eliminarMotivo(id: number) {
-  if (confirm('¿Eliminar?')) this.api.delete('motivos', id).subscribe(() =>
-    this.api.getAll('motivos').subscribe(d => {
-      this.motivos = d;
-      this.cdr.detectChanges();
-    }));
-}
+  eliminarMotivo(id: number) {
+    if (confirm('¿Eliminar?')) {
+      this.api.delete('motivos', id).subscribe({
+        next: () => {
+          this.api.getAll('motivos').subscribe(d => {
+            this.motivos = d;
+            this.cdr.detectChanges();
+          });
+        },
+        error: () => {
+          alert('No se puede eliminar porque está siendo usado en una justificación.');
+        }
+      });
+    }
+  }
 
   // Tipos de Actividad
   agregarTipoActividad() {
@@ -82,12 +90,19 @@ export class Catalogos implements OnInit {
     });
   }
 
-  eliminarTipoActividad(id: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('tipos-actividad', id).subscribe(() =>
-      this.api.getAll('tipos-actividad').subscribe(d => {
-        this.tiposActividad = d;
-        this.cdr.detectChanges();
-      }));
+    eliminarTipoActividad(id: number) {
+      if (confirm('¿Eliminar?')) {this.api.delete('tipos-actividad', id).subscribe({
+        next: () => {
+        this.api.getAll('tipos-actividad').subscribe(d => {
+          this.tiposActividad = d;
+          this.cdr.detectChanges();
+        });
+        },
+          error: () => {
+            alert('No se puede eliminar porque están estudiantes inscritos en esta actividad.');
+          }
+        });
+    }
   }
 
   // Carreras
@@ -103,11 +118,18 @@ export class Catalogos implements OnInit {
   }
 
   eliminarCarrera(codigo: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('carreras', codigo).subscribe(() =>
-      this.api.getAll('carreras').subscribe(d => {
-        this.carreras = d;
-        this.cdr.detectChanges();
-      }));
+        if (confirm('¿Eliminar?')) {this.api.delete('carreras', codigo).subscribe({
+        next: () => {
+        this.api.getAll('carreras').subscribe(d => {
+          this.carreras= d;
+          this.cdr.detectChanges();
+        });
+        },
+          error: () => {
+            alert('No se puede eliminar porque están estudiantes inscritos en esta Carrera.');
+          }
+        });
+    }
   }
 
   // Tipos de Discapacidad
@@ -123,11 +145,18 @@ export class Catalogos implements OnInit {
   }
 
   eliminarTipoDiscapacidad(id: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('tipos-discapacidad', id).subscribe(() =>
-      this.api.getAll('tipos-discapacidad').subscribe(d => {
-        this.tiposDiscapacidad = d;
-        this.cdr.detectChanges();
-      }));
+        if (confirm('¿Eliminar?')) {this.api.delete('tipos-discapacidad', id).subscribe({
+        next: () => {
+        this.api.getAll('tipos-discapacidad').subscribe(d => {
+          this.tiposDiscapacidad = d;
+          this.cdr.detectChanges();
+        });
+        },
+          error: () => {
+            alert('No se puede eliminar porque hay estudiantes que presentan este tipo de discapacidad.');
+          }
+        });
+    }
   }
 
   // Condiciones Médicas
@@ -143,11 +172,18 @@ export class Catalogos implements OnInit {
   }
 
   eliminarCondicion(id: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('condiciones-medicas', id).subscribe(() =>
-      this.api.getAll('condiciones-medicas').subscribe(d => {
-        this.condicionesMedicas = d;
-        this.cdr.detectChanges();
-      }));
+              if (confirm('¿Eliminar?')) {this.api.delete('condiciones-medicas', id).subscribe({
+        next: () => {
+        this.api.getAll('condiciones-medicas').subscribe(d => {
+          this.condicionesMedicas = d;
+          this.cdr.detectChanges();
+        });
+        },
+          error: () => {
+            alert('No se puede eliminar porque hay estudiantes que presentan este tipo de discapacidad.');
+          }
+        });
+    }
   }
 
   // Alergias
@@ -163,11 +199,18 @@ export class Catalogos implements OnInit {
   }
 
   eliminarAlergia(id: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('alergias', id).subscribe(() =>
-      this.api.getAll('alergias').subscribe(d => {
-        this.alergias = d;
-        this.cdr.detectChanges();
-      }));
+        if (confirm('¿Eliminar?')) {this.api.delete('alergias', id).subscribe({
+        next: () => {
+        this.api.getAll('alergias').subscribe(d => {
+          this.alergias = d;
+          this.cdr.detectChanges();
+        });
+        },
+          error: () => {
+            alert('No se puede eliminar porque hay estudiantes que presentan este tipo de discapacidad.');
+          }
+        });
+    }
   }
 
   cerrarSesion() {
