@@ -55,25 +55,39 @@ export class Catalogos implements OnInit {
     if (!this.nuevoMotivo.trim()) return;
     this.api.post('motivos', { nombre: this.nuevoMotivo }).subscribe(() => {
       this.nuevoMotivo = '';
-      this.api.getAll('motivos').subscribe(d => this.motivos = d);
+      this.api.getAll('motivos').subscribe(d => {
+        this.motivos = d;
+        this.cdr.detectChanges();
+      });
     });
   }
-  eliminarMotivo(id: number) {
-    if (confirm('¿Eliminar?')) this.api.delete('motivos', id).subscribe(() =>
-      this.api.getAll('motivos').subscribe(d => this.motivos = d));
-  }
+
+ eliminarMotivo(id: number) {
+  if (confirm('¿Eliminar?')) this.api.delete('motivos', id).subscribe(() =>
+    this.api.getAll('motivos').subscribe(d => {
+      this.motivos = d;
+      this.cdr.detectChanges();
+    }));
+}
 
   // Tipos de Actividad
   agregarTipoActividad() {
     if (!this.nuevoTipoActividad.trim()) return;
     this.api.post('tipos-actividad', { tipo: this.nuevoTipoActividad }).subscribe(() => {
       this.nuevoTipoActividad = '';
-      this.api.getAll('tipos-actividad').subscribe(d => this.tiposActividad = d);
+      this.api.getAll('tipos-actividad').subscribe(d => {
+        this.tiposActividad = d;
+        this.cdr.detectChanges();
+      });
     });
   }
+
   eliminarTipoActividad(id: number) {
     if (confirm('¿Eliminar?')) this.api.delete('tipos-actividad', id).subscribe(() =>
-      this.api.getAll('tipos-actividad').subscribe(d => this.tiposActividad = d));
+      this.api.getAll('tipos-actividad').subscribe(d => {
+        this.tiposActividad = d;
+        this.cdr.detectChanges();
+      }));
   }
 
   // Carreras
@@ -81,12 +95,19 @@ export class Catalogos implements OnInit {
     if (!this.nuevaCarrera.nombre.trim()) return;
     this.api.post('carreras', this.nuevaCarrera).subscribe(() => {
       this.nuevaCarrera = { codigo: null, nombre: '', coordinador: '' };
-      this.api.getAll('carreras').subscribe(d => this.carreras = d);
+      this.api.getAll('carreras').subscribe(d => {
+        this.carreras = d;
+        this.cdr.detectChanges();
+      });
     });
   }
+
   eliminarCarrera(codigo: number) {
     if (confirm('¿Eliminar?')) this.api.delete('carreras', codigo).subscribe(() =>
-      this.api.getAll('carreras').subscribe(d => this.carreras = d));
+      this.api.getAll('carreras').subscribe(d => {
+        this.carreras = d;
+        this.cdr.detectChanges();
+      }));
   }
 
   // Tipos de Discapacidad
@@ -94,12 +115,19 @@ export class Catalogos implements OnInit {
     if (!this.nuevoTipoDiscapacidad.trim()) return;
     this.api.post('tipos-discapacidad', { nombre: this.nuevoTipoDiscapacidad }).subscribe(() => {
       this.nuevoTipoDiscapacidad = '';
-      this.api.getAll('tipos-discapacidad').subscribe(d => this.tiposDiscapacidad = d);
+      this.api.getAll('tipos-discapacidad').subscribe(d => {
+        this.tiposDiscapacidad = d;
+        this.cdr.detectChanges();
+      });
     });
   }
+
   eliminarTipoDiscapacidad(id: number) {
     if (confirm('¿Eliminar?')) this.api.delete('tipos-discapacidad', id).subscribe(() =>
-      this.api.getAll('tipos-discapacidad').subscribe(d => this.tiposDiscapacidad = d));
+      this.api.getAll('tipos-discapacidad').subscribe(d => {
+        this.tiposDiscapacidad = d;
+        this.cdr.detectChanges();
+      }));
   }
 
   // Condiciones Médicas
@@ -107,12 +135,19 @@ export class Catalogos implements OnInit {
     if (!this.nuevaCondicion.trim()) return;
     this.api.post('condiciones-medicas', { nombre: this.nuevaCondicion }).subscribe(() => {
       this.nuevaCondicion = '';
-      this.api.getAll('condiciones-medicas').subscribe(d => this.condicionesMedicas = d);
+      this.api.getAll('condiciones-medicas').subscribe(d => {
+        this.condicionesMedicas = d;
+        this.cdr.detectChanges();
+      });
     });
   }
+
   eliminarCondicion(id: number) {
     if (confirm('¿Eliminar?')) this.api.delete('condiciones-medicas', id).subscribe(() =>
-      this.api.getAll('condiciones-medicas').subscribe(d => this.condicionesMedicas = d));
+      this.api.getAll('condiciones-medicas').subscribe(d => {
+        this.condicionesMedicas = d;
+        this.cdr.detectChanges();
+      }));
   }
 
   // Alergias
@@ -120,12 +155,19 @@ export class Catalogos implements OnInit {
     if (!this.nuevaAlergia.trim()) return;
     this.api.post('alergias', { tipo: this.nuevaAlergia }).subscribe(() => {
       this.nuevaAlergia = '';
-      this.api.getAll('alergias').subscribe(d => this.alergias = d);
+      this.api.getAll('alergias').subscribe(d => {
+        this.alergias = d;
+        this.cdr.detectChanges();
+      });
     });
   }
+
   eliminarAlergia(id: number) {
     if (confirm('¿Eliminar?')) this.api.delete('alergias', id).subscribe(() =>
-      this.api.getAll('alergias').subscribe(d => this.alergias = d));
+      this.api.getAll('alergias').subscribe(d => {
+        this.alergias = d;
+        this.cdr.detectChanges();
+      }));
   }
 
   cerrarSesion() {

@@ -78,14 +78,20 @@ export class Estudiantes implements OnInit {
     if (this.filtroCarrera) params += `carrera=${this.filtroCarrera}&`;
     if (this.filtroInscrito !== '') params += `inscrito=${this.filtroInscrito}&`;
     if (this.filtroPensum !== '') params += `pensumCerrado=${this.filtroPensum}&`;
-    this.api.getAll(params).subscribe(data => this.estudiantes = data);
+    this.api.getAll(params).subscribe(data => {
+      this.estudiantes = data;
+      this.cdr.detectChanges();
+    });
   }
 
   limpiarFiltros() {
     this.filtroCarrera = '';
     this.filtroInscrito = '';
     this.filtroPensum = '';
-    this.cargarDatos();
+    this.api.getAll('estudiantes').subscribe(data => {
+      this.estudiantes = data;
+      this.cdr.detectChanges();
+    });
   }
 
   nuevo() {
