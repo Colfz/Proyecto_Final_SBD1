@@ -19,7 +19,8 @@ public class FechaAusencia {
     @Column(name = "Fecha_Ausencia")
     private LocalDateTime fechaAusencia;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "JUSTIFICACION_Id")
+    @JsonIgnoreProperties({"estudiante", "motivo", "estado"})
     private Justificacion justificacion;
 }

@@ -164,6 +164,21 @@ export class Estudiantes implements OnInit {
     }
   }
 
+  getNombreCondicion(id: number): string {
+    const c = this.condicionesMedicas.find(c => c.id === Number(id));
+    return c ? c.nombre : '';
+  }
+
+  getNombreAlergia(id: number): string {
+    const a = this.alergias.find(a => a.id === Number(id));
+    return a ? a.tipo : '';
+  }
+
+  getNombreDiscapacidad(id: number): string {
+    const d = this.discapacidades.find(d => d.id === Number(id));
+    return d ? d.tipo : '';
+  }
+
 toggleCarrera(codigo: number) {
   const idx = this.form.carreras.indexOf(codigo);
   if (idx === -1) this.form.carreras.push(codigo);

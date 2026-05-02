@@ -76,9 +76,12 @@ export class Justificaciones implements OnInit {
   }
 
   verDetalle(j: any) {
-    this.justificacionSeleccionada = j;
+    this.justificacionSeleccionada = { ...j, fechasAusencia: [] };
+    this.cdr.detectChanges();
+    
     this.api.getAll(`fecha-ausencia/justificacion/${j.id}`).subscribe(data => {
       this.justificacionSeleccionada.fechasAusencia = data;
+      this.cdr.detectChanges();
     });
   }
 

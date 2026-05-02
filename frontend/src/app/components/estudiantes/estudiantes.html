@@ -240,51 +240,79 @@
           <div class="col-md-6"><strong>Tipo de Sangre:</strong> {{ estudianteSeleccionado.sangre?.tipo }}</div>
           <div class="col-md-6"><strong>Inscrito:</strong> {{ estudianteSeleccionado.inscrito ? 'Sí' : 'No' }}</div>
           <div class="col-md-6"><strong>Pensum Cerrado:</strong> {{ estudianteSeleccionado.pensumCerrado ? 'Sí' : 'No' }}</div>
+
           <div class="col-12">
             <strong>Carreras:</strong>
             <span *ngFor="let c of estudianteSeleccionado.carreras" class="badge bg-primary me-1">{{ c.nombre }}</span>
+            <span *ngIf="!estudianteSeleccionado.carreras?.length" class="text-muted">Ninguna</span>
           </div>
-            <!-- Condiciones Médicas -->
-  <div class="col-md-12">
-    <label class="form-label">Condiciones Médicas</label>
-    <div class="d-flex flex-wrap gap-2">
-      <div *ngFor="let c of condicionesMedicas" class="form-check">
-        <input class="form-check-input" type="checkbox"
-          [checked]="condicionSeleccionada(c.id)"
-          (change)="toggleCondicion(c.id)"
-          [id]="'condicion-' + c.id">
-        <label class="form-check-label" [for]="'condicion-' + c.id">{{ c.nombre }}</label>
-      </div>
-    </div>
-  </div>
 
-  <!-- Alergias -->
-  <div class="col-md-12">
-    <label class="form-label">Alergias</label>
-    <div class="d-flex flex-wrap gap-2">
-      <div *ngFor="let a of alergias" class="form-check">
-        <input class="form-check-input" type="checkbox"
-          [checked]="alergiaSeleccionada(a.id)"
-          (change)="toggleAlergia(a.id)"
-          [id]="'alergia-' + a.id">
-        <label class="form-check-label" [for]="'alergia-' + a.id">{{ a.tipo }}</label>
-      </div>
-    </div>
-  </div>
+          <!-- Condiciones Médicas -->
+          <div class="col-md-12">
+            <label class="form-label">Condiciones Médicas</label>
+            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
+              <div *ngFor="let c of condicionesMedicas" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="condicionSeleccionada(c.id)"
+                  (change)="toggleCondicion(c.id)"
+                  [id]="'condicion-' + c.id">
+                <label class="form-check-label" [for]="'condicion-' + c.id">
+                  {{ c.nombre }}
+                </label>
+              </div>
+              <span *ngIf="!condicionesMedicas.length" class="text-muted small">No hay condiciones registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.condicionesMedicas" class="badge bg-danger me-1">
+                {{ getNombreCondicion(id) }}
+              </span>
+            </div>
+          </div>
 
-  <!-- Discapacidades -->
-  <div class="col-md-12">
-    <label class="form-label">Discapacidades</label>
-    <div class="d-flex flex-wrap gap-2">
-      <div *ngFor="let d of discapacidades" class="form-check">
-        <input class="form-check-input" type="checkbox"
-          [checked]="discapacidadSeleccionada(d.id)"
-          (change)="toggleDiscapacidad(d.id)"
-          [id]="'discapacidad-' + d.id">
-        <label class="form-check-label" [for]="'discapacidad-' + d.id">{{ d.tipo }}</label>
-      </div>
-    </div>
-  </div>
+
+          <!-- Alergias -->
+          <div class="col-md-12">
+            <label class="form-label">Alergias</label>
+            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
+              <div *ngFor="let a of alergias" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="alergiaSeleccionada(a.id)"
+                  (change)="toggleAlergia(a.id)"
+                  [id]="'alergia-' + a.id">
+                <label class="form-check-label" [for]="'alergia-' + a.id">
+                  {{ a.tipo }}
+                </label>
+              </div>
+              <span *ngIf="!alergias.length" class="text-muted small">No hay alergias registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.alergias" class="badge bg-warning text-dark me-1">
+                {{ getNombreAlergia(id) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Discapacidades -->
+          <div class="col-md-12">
+            <label class="form-label">Discapacidades</label>
+            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
+              <div *ngFor="let d of discapacidades" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="discapacidadSeleccionada(d.id)"
+                  (change)="toggleDiscapacidad(d.id)"
+                  [id]="'discapacidad-' + d.id">
+                <label class="form-check-label" [for]="'discapacidad-' + d.id">
+                  {{ d.tipo }}
+                </label>
+              </div>
+              <span *ngIf="!discapacidades.length" class="text-muted small">No hay discapacidades registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.discapacidades" class="badge bg-secondary me-1">
+                {{ getNombreDiscapacidad(id) }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
