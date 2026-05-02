@@ -55,10 +55,10 @@
               <td>{{ j.motivo?.nombre }}</td>
               <td>{{ j.fechaPresentacion | date:'dd/MM/yyyy' }}</td>
               <td>
-                <select class="form-select form-select-sm" style="width: auto;"
-                  [value]="j.estado?.id"
-                  (change)="actualizarEstado(j.id, +$any($event.target).value)">
-                  <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
+                 <select class="form-select form-select-sm" style="width: auto;"
+                    [(ngModel)]="j.estado.id"
+                    (ngModelChange)="actualizarEstado(j.id, $event)">
+                    <option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</option>
                 </select>
               </td>
               <td>

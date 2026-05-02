@@ -29,7 +29,11 @@ export class Justificaciones implements OnInit {
     fechasAusencia: ['']
   };
 
-  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
     const sesion = sessionStorage.getItem('usuario');
     if (!sesion) this.router.navigate(['/login']);
     else this.usuario = JSON.parse(sesion);
@@ -86,40 +90,63 @@ export class Justificaciones implements OnInit {
     this.form.fechasAusencia.splice(i, 1);
   }
 
-  guardar() {
-    const body = {
-      descripcion: this.form.descripcion,
-      documentoRespaldo: this.form.documentoRespaldo,
-      fechaPresentacion: this.form.fechaPresentacion + 'T00:00:00',
-      estudiante: { carne: this.form.estudiante },
-      motivo: { id: this.form.motivo },
-      estado: { id: 1 }
-    };
-
-    this.api.post('justificaciones', body).subscribe((j: any) => {
-      this.form.fechasAusencia.forEach((fecha: string) => {
-        if (fecha) {
-          this.api.post('fecha-ausencia', {
-            fechaAusencia: fecha + 'T00:00:00',
-            justificacion: { id: j.id }
-          }).subscribe();
-        }
-      });
-      this.cargarDatos();
+guardar() {
+  const body = {
+    descripcion: this.form.descripcion,
+    documentoRespaldo: this.form.documentoRespaldo,
+    fechaPresentacion: this.form.fechaPresentacion + 'T00:00:00',
+    estudiante: { carne: this.form.estudiante },
+    motivo: { id: this.form.motivo },
+    estado: { id: 1 }
+  };
+  this.api.post('justificaciones', body).subscribe((j: any) => {
+    this.form.fechasAusencia.forEach((fecha: string) => {
+      if (fecha) {
+        this.api.post('fecha-ausencia', {
+          fechaAusencia: fecha + 'T00:00:00',
+          justificacion: { id: j.id }
+        }).subscribe();
+      }
     });
-  }
-
-  actualizarEstado(id: number, estadoId: number) {
-    const estado = this.estados.find(e => e.id == estadoId);
-    this.api.put(`justificaciones/${id}`, 'estado', estado).subscribe(() => {
-      this.cargarDatos();
+    this.api.getAll('justificaciones').subscribe(data => {
+      this.justificaciones = data;
+      this.cdr.detectChanges();
     });
-  }
+  });
+}
+
+actualizarEstado(id: number, estadoId: number) {
+  const estado = this.estados.find(e => e.id == estadoId);
+  if (!estado) return;
+
+  this.api.put(`justificaciones/${id}`, 'estado', estado).subscribe({
+    next: () => {
+      
+      const j = this.justificaciones.find(j => j.id === id);
+      if (j) {
+        j.estado = estado;
+        this.cdr.detectChanges();
+      }
+    },
+    error: (err) => {
+      console.error('Error al actualizar estado', err);
+      alert('Error al actualizar el estado.');
+    }
+  });
+}
 
   eliminar(id: number) {
     if (confirm('¿Eliminar esta justificación?')) {
-      this.api.delete('justificaciones', id).subscribe(() => {
-        this.cargarDatos();
+      this.api.delete('justificaciones', id).subscribe({
+        next: () => {
+          this.api.getAll('justificaciones').subscribe(data => {
+            this.justificaciones = data;
+            this.cdr.detectChanges();
+          });
+        },
+        error: () => {
+          alert('No se puede eliminar esta justificación.');
+        }
       });
     }
   }
