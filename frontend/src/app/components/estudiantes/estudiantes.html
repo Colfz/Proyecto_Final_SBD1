@@ -20,7 +20,7 @@
     </nav>
     <div class="p-3 position-absolute bottom-0 w-100">
       <button class="btn btn-outline-light btn-sm w-100" (click)="cerrarSesion()">
-      <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
       </button>
     </div>
   </div>
@@ -196,9 +196,11 @@
               <label class="form-check-label" for="pensumCerrado">Pensum Cerrado</label>
             </div>
           </div>
+
+          <!-- Carreras -->
           <div class="col-md-12">
-            <label class="form-label">Carreras</label>
-            <div class="d-flex flex-wrap gap-2">
+            <label class="form-label fw-bold">Carreras</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto;">
               <div *ngFor="let c of carreras" class="form-check">
                 <input class="form-check-input" type="checkbox"
                   [checked]="carreraSeleccionada(c.codigo)"
@@ -207,7 +209,73 @@
                 <label class="form-check-label" [for]="'carrera-' + c.codigo">{{ c.nombre }}</label>
               </div>
             </div>
+            <div class="mt-1">
+              <span *ngFor="let cod of form.carreras" class="badge bg-primary me-1">
+                {{ getNombreCarrera(cod) }}
+              </span>
+            </div>
           </div>
+
+          <!-- Condiciones Médicas -->
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Condiciones Médicas</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto;">
+              <div *ngFor="let c of condicionesMedicas" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="condicionSeleccionada(c.id)"
+                  (change)="toggleCondicion(c.id)"
+                  [id]="'cond-' + c.id">
+                <label class="form-check-label" [for]="'cond-' + c.id">{{ c.nombre }}</label>
+              </div>
+              <span *ngIf="!condicionesMedicas.length" class="text-muted small">No hay condiciones registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.condicionesMedicas" class="badge bg-danger me-1">
+                {{ getNombreCondicion(id) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Alergias -->
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Alergias</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto;">
+              <div *ngFor="let a of alergias" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="alergiaSeleccionada(a.id)"
+                  (change)="toggleAlergia(a.id)"
+                  [id]="'aler-' + a.id">
+                <label class="form-check-label" [for]="'aler-' + a.id">{{ a.tipo }}</label>
+              </div>
+              <span *ngIf="!alergias.length" class="text-muted small">No hay alergias registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.alergias" class="badge bg-warning text-dark me-1">
+                {{ getNombreAlergia(id) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Discapacidades -->
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Discapacidades</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto;">
+              <div *ngFor="let d of discapacidades" class="form-check">
+                <input class="form-check-input" type="checkbox"
+                  [checked]="discapacidadSeleccionada(d.id)"
+                  (change)="toggleDiscapacidad(d.id)"
+                  [id]="'disc-' + d.id">
+                <label class="form-check-label" [for]="'disc-' + d.id">{{ d.tipo }}</label>
+              </div>
+              <span *ngIf="!discapacidades.length" class="text-muted small">No hay discapacidades registradas</span>
+            </div>
+            <div class="mt-1">
+              <span *ngFor="let id of form.discapacidades" class="badge bg-secondary me-1">
+                {{ getNombreDiscapacidad(id) }}
+              </span>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="modal-footer">
@@ -225,7 +293,9 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content" *ngIf="estudianteSeleccionado">
       <div class="modal-header" style="background: #1a237e; color: white;">
-        <h5 class="modal-title">Expediente — {{ estudianteSeleccionado.nombres }} {{ estudianteSeleccionado.apellidos }}</h5>
+        <h5 class="modal-title">
+          Expediente — {{ estudianteSeleccionado.nombres }} {{ estudianteSeleccionado.apellidos }}
+        </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -243,75 +313,34 @@
 
           <div class="col-12">
             <strong>Carreras:</strong>
-            <span *ngFor="let c of estudianteSeleccionado.carreras" class="badge bg-primary me-1">{{ c.nombre }}</span>
-            <span *ngIf="!estudianteSeleccionado.carreras?.length" class="text-muted">Ninguna</span>
+            <ng-container *ngIf="estudianteSeleccionado.carreras?.length; else sinCarreras">
+              <span *ngFor="let c of estudianteSeleccionado.carreras" class="badge bg-primary me-1">{{ c.nombre }}</span>
+            </ng-container>
+            <ng-template #sinCarreras><span class="text-muted ms-1">Ninguna</span></ng-template>
           </div>
 
-          <!-- Condiciones Médicas -->
-          <div class="col-md-12">
-            <label class="form-label">Condiciones Médicas</label>
-            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
-              <div *ngFor="let c of condicionesMedicas" class="form-check">
-                <input class="form-check-input" type="checkbox"
-                  [checked]="condicionSeleccionada(c.id)"
-                  (change)="toggleCondicion(c.id)"
-                  [id]="'condicion-' + c.id">
-                <label class="form-check-label" [for]="'condicion-' + c.id">
-                  {{ c.nombre }}
-                </label>
-              </div>
-              <span *ngIf="!condicionesMedicas.length" class="text-muted small">No hay condiciones registradas</span>
-            </div>
-            <div class="mt-1">
-              <span *ngFor="let id of form.condicionesMedicas" class="badge bg-danger me-1">
-                {{ getNombreCondicion(id) }}
-              </span>
-            </div>
+          <div class="col-12">
+            <strong>Condiciones Médicas:</strong>
+            <ng-container *ngIf="estudianteSeleccionado.condicionesMedicas?.length; else sinCondiciones">
+              <span *ngFor="let c of estudianteSeleccionado.condicionesMedicas" class="badge bg-danger me-1">{{ c.nombre }}</span>
+            </ng-container>
+            <ng-template #sinCondiciones><span class="text-muted ms-1">Ninguna</span></ng-template>
           </div>
 
-
-          <!-- Alergias -->
-          <div class="col-md-12">
-            <label class="form-label">Alergias</label>
-            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
-              <div *ngFor="let a of alergias" class="form-check">
-                <input class="form-check-input" type="checkbox"
-                  [checked]="alergiaSeleccionada(a.id)"
-                  (change)="toggleAlergia(a.id)"
-                  [id]="'alergia-' + a.id">
-                <label class="form-check-label" [for]="'alergia-' + a.id">
-                  {{ a.tipo }}
-                </label>
-              </div>
-              <span *ngIf="!alergias.length" class="text-muted small">No hay alergias registradas</span>
-            </div>
-            <div class="mt-1">
-              <span *ngFor="let id of form.alergias" class="badge bg-warning text-dark me-1">
-                {{ getNombreAlergia(id) }}
-              </span>
-            </div>
+          <div class="col-12">
+            <strong>Alergias:</strong>
+            <ng-container *ngIf="estudianteSeleccionado.alergias?.length; else sinAlergias">
+              <span *ngFor="let a of estudianteSeleccionado.alergias" class="badge bg-warning text-dark me-1">{{ a.tipo }}</span>
+            </ng-container>
+            <ng-template #sinAlergias><span class="text-muted ms-1">Ninguna</span></ng-template>
           </div>
 
-          <!-- Discapacidades -->
-          <div class="col-md-12">
-            <label class="form-label">Discapacidades</label>
-            <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
-              <div *ngFor="let d of discapacidades" class="form-check">
-                <input class="form-check-input" type="checkbox"
-                  [checked]="discapacidadSeleccionada(d.id)"
-                  (change)="toggleDiscapacidad(d.id)"
-                  [id]="'discapacidad-' + d.id">
-                <label class="form-check-label" [for]="'discapacidad-' + d.id">
-                  {{ d.tipo }}
-                </label>
-              </div>
-              <span *ngIf="!discapacidades.length" class="text-muted small">No hay discapacidades registradas</span>
-            </div>
-            <div class="mt-1">
-              <span *ngFor="let id of form.discapacidades" class="badge bg-secondary me-1">
-                {{ getNombreDiscapacidad(id) }}
-              </span>
-            </div>
+          <div class="col-12">
+            <strong>Discapacidades:</strong>
+            <ng-container *ngIf="estudianteSeleccionado.discapacidades?.length; else sinDiscapacidades">
+              <span *ngFor="let d of estudianteSeleccionado.discapacidades" class="badge bg-secondary me-1">{{ d.tipo }}</span>
+            </ng-container>
+            <ng-template #sinDiscapacidades><span class="text-muted ms-1">Ninguna</span></ng-template>
           </div>
         </div>
       </div>

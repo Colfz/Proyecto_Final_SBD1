@@ -33,7 +33,8 @@ export class Estudiantes implements OnInit {
     fechaNac: '', genero: '', fotografia: '', correoInstitucional: '',
     correoPersonal: '', direccion: '', anioIngreso: '',
     inscrito: false, pensumCerrado: false,
-    sangre: null, carreras: []
+    sangre: null, carreras: [],
+    condicionesMedicas: [], alergias: [], discapacidades: []
   };
 
   constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {
@@ -108,6 +109,7 @@ export class Estudiantes implements OnInit {
       alergias: [],
       discapacidades: []
     };
+    this.cdr.detectChanges();
   }
 
   editar(e: any) {
@@ -117,15 +119,17 @@ export class Estudiantes implements OnInit {
       fechaNac: e.fechaNac ? e.fechaNac.substring(0, 10) : '',
       anioIngreso: e.anioIngreso ? e.anioIngreso.substring(0, 10) : '',
       sangre: e.sangre ? e.sangre.id : null,
-      carreras: e.carreras ? e.carreras.map((c: any) => c.codigo) : [],
-      condicionesMedicas: e.condicionesMedicas ? e.condicionesMedicas.map((c: any) => c.id) : [],
-      alergias: e.alergias ? e.alergias.map((a: any) => a.id) : [],
-      discapacidades: e.discapacidades ? e.discapacidades.map((d: any) => d.id) : []
+      carreras: e.carreras ? e.carreras.map((c: any) => Number(c.codigo)) : [],
+      condicionesMedicas: e.condicionesMedicas ? e.condicionesMedicas.map((c: any) => Number(c.id)) : [],
+      alergias: e.alergias ? e.alergias.map((a: any) => Number(a.id)) : [],
+      discapacidades: e.discapacidades ? e.discapacidades.map((d: any) => Number(d.id)) : []
     };
+    this.cdr.detectChanges();
   }
 
   verDetalle(e: any) {
     this.estudianteSeleccionado = e;
+    this.cdr.detectChanges();
   }
 
   guardar() {
@@ -133,11 +137,11 @@ export class Estudiantes implements OnInit {
       ...this.form,
       fechaNac: this.form.fechaNac ? this.form.fechaNac + 'T00:00:00' : null,
       anioIngreso: this.form.anioIngreso ? this.form.anioIngreso + 'T00:00:00' : null,
-      sangre: this.form.sangre ? { id: this.form.sangre } : null,
-      carreras: this.form.carreras.map((c: any) => ({ codigo: c })),
-      condicionesMedicas: this.form.condicionesMedicas.map((id: number) => ({ id })),
-      alergias: this.form.alergias.map((id: number) => ({ id })),
-      discapacidades: this.form.discapacidades.map((id: number) => ({ id }))
+      sangre: this.form.sangre ? { id: Number(this.form.sangre) } : null,
+      carreras: this.form.carreras.map((c: any) => ({ codigo: Number(c) })),
+      condicionesMedicas: this.form.condicionesMedicas.map((id: any) => ({ id: Number(id) })),
+      alergias: this.form.alergias.map((id: any) => ({ id: Number(id) })),
+      discapacidades: this.form.discapacidades.map((id: any) => ({ id: Number(id) }))
     };
 
     if (this.modoEdicion) {
@@ -151,67 +155,79 @@ export class Estudiantes implements OnInit {
     }
   }
 
-  cerrarSesion() {
-  sessionStorage.removeItem('usuario');
-  this.router.navigate(['/login']);
-  }
-
   eliminar(carne: number) {
     if (confirm('¿Estás seguro de eliminar este estudiante?')) {
-      this.api.delete('estudiantes', carne).subscribe(() => {
-        this.cargarDatos();
+      this.api.delete('estudiantes', carne).subscribe({
+        next: () => { this.cargarDatos(); },
+        error: () => { alert('No se puede eliminar porque tiene registros asociados.'); }
       });
     }
   }
 
-  getNombreCondicion(id: number): string {
-    const c = this.condicionesMedicas.find(c => c.id === Number(id));
+  cerrarSesion() {
+    sessionStorage.removeItem('usuario');
+    this.router.navigate(['/login']);
+  }
+
+  // Carreras
+  toggleCarrera(codigo: number) {
+    codigo = Number(codigo);
+    const idx = this.form.carreras.map(Number).indexOf(codigo);
+    if (idx === -1) this.form.carreras.push(codigo);
+    else this.form.carreras.splice(idx, 1);
+  }
+  carreraSeleccionada(codigo: number): boolean {
+    return this.form.carreras.map(Number).includes(Number(codigo));
+  }
+
+  // Condiciones Médicas
+  toggleCondicion(id: number) {
+    id = Number(id);
+    const idx = this.form.condicionesMedicas.map(Number).indexOf(id);
+    if (idx === -1) this.form.condicionesMedicas.push(id);
+    else this.form.condicionesMedicas.splice(idx, 1);
+  }
+  condicionSeleccionada(id: number): boolean {
+    return this.form.condicionesMedicas.map(Number).includes(Number(id));
+  }
+
+  // Alergias
+  toggleAlergia(id: number) {
+    id = Number(id);
+    const idx = this.form.alergias.map(Number).indexOf(id);
+    if (idx === -1) this.form.alergias.push(id);
+    else this.form.alergias.splice(idx, 1);
+  }
+  alergiaSeleccionada(id: number): boolean {
+    return this.form.alergias.map(Number).includes(Number(id));
+  }
+
+  // Discapacidades
+  toggleDiscapacidad(id: number) {
+    id = Number(id);
+    const idx = this.form.discapacidades.map(Number).indexOf(id);
+    if (idx === -1) this.form.discapacidades.push(id);
+    else this.form.discapacidades.splice(idx, 1);
+  }
+  discapacidadSeleccionada(id: number): boolean {
+    return this.form.discapacidades.map(Number).includes(Number(id));
+  }
+
+  // Helpers para mostrar nombres en badges
+  getNombreCarrera(codigo: number): string {
+    const c = this.carreras.find(c => Number(c.codigo) === Number(codigo));
     return c ? c.nombre : '';
   }
-
+  getNombreCondicion(id: number): string {
+    const c = this.condicionesMedicas.find(c => Number(c.id) === Number(id));
+    return c ? c.nombre : '';
+  }
   getNombreAlergia(id: number): string {
-    const a = this.alergias.find(a => a.id === Number(id));
+    const a = this.alergias.find(a => Number(a.id) === Number(id));
     return a ? a.tipo : '';
   }
-
   getNombreDiscapacidad(id: number): string {
-    const d = this.discapacidades.find(d => d.id === Number(id));
+    const d = this.discapacidades.find(d => Number(d.id) === Number(id));
     return d ? d.tipo : '';
   }
-
-toggleCarrera(codigo: number) {
-  const idx = this.form.carreras.indexOf(codigo);
-  if (idx === -1) this.form.carreras.push(codigo);
-  else this.form.carreras.splice(idx, 1);
-}
-carreraSeleccionada(codigo: number): boolean {
-  return this.form.carreras.includes(codigo);
-}
-toggleCondicion(id: number) {
-  const idx = this.form.condicionesMedicas.indexOf(Number(id));
-  if (idx === -1) this.form.condicionesMedicas.push(Number(id));
-  else this.form.condicionesMedicas.splice(idx, 1);
-}
-condicionSeleccionada(id: number): boolean {
-  return this.form.condicionesMedicas.includes(Number(id));
-}
-
-toggleAlergia(id: number) {
-  const idx = this.form.alergias.indexOf(Number(id));
-  if (idx === -1) this.form.alergias.push(Number(id));
-  else this.form.alergias.splice(idx, 1);
-}
-alergiaSeleccionada(id: number): boolean {
-  return this.form.alergias.includes(Number(id));
-}
-
-toggleDiscapacidad(id: number) {
-  const idx = this.form.discapacidades.indexOf(Number(id));
-  if (idx === -1) this.form.discapacidades.push(Number(id));
-  else this.form.discapacidades.splice(idx, 1);
-}
-discapacidadSeleccionada(id: number): boolean {
-  return this.form.discapacidades.includes(Number(id));
-}
-
 }
